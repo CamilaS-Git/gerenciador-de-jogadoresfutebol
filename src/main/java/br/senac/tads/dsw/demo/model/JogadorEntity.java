@@ -27,4 +27,7 @@ import lombok.Setter;
 
 		@Column(nullable = false)
 		private Boolean lesionado = false;
+
+		@Column(columnDefinition = "TEXT")
+		private String observacoes;
 }

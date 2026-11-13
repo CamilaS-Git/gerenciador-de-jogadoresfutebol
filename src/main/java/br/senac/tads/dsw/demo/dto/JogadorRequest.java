@@ -20,6 +20,7 @@ public record JogadorRequest(
 	String time,
 
 	@NotNull(message = "Informe se o jogador está lesionado.")
-	Boolean lesionado){
+	Boolean lesionado,
 
-}
+	String observacoes)
+{}

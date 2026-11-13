@@ -7,10 +7,12 @@ public record JogadorResponse(
 	String nome,
 	Integer numeroCamisa,
 	String time,
-	Boolean lesionado
+	Boolean lesionado,
+	String observacoes
 ) {
 	public static JogadorResponse de(JogadorEntity jogadorEntity) {
 		return new JogadorResponse(jogadorEntity.getId(), jogadorEntity.getNome(), jogadorEntity.getNumeroCamisa(),
-			jogadorEntity.getTime(), jogadorEntity.getLesionado());
+			jogadorEntity.getTime(), jogadorEntity.getLesionado(), jogadorEntity.getObservacoes()
+		);
 	}
 }
