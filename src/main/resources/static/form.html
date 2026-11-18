@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Incluir novo jogador</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      border-top: 12px solid #ff9900;
+      border-bottom: 6px solid #000080;
+    }
+
+    main {
+      width: 90%;
+      max-width: 1000px;
+      margin: 30px auto;
+      flex: 1;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: normal;
+    }
+
+    .formulario {
+      width: 100%;
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 15px;
+      border: 1px solid #71869b;
+      background-color: #fff;
+    }
+
+    .formulario h3 {
+      margin: 0 0 18px;
+      font-size: 16px;
+    }
+
+    .campo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .campo > label:first-child {
+      width: 145px;
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+
+    .campo input[type="text"],
+    .campo input[type="number"] {
+      width: 100%;
+      min-width: 0;
+      padding: 8px;
+      border: 1px solid #777;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .opcoes-lesao {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-size: 14px;
+    }
+
+    .opcoes-lesao label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .opcoes-lesao input {
+      width: 18px;
+      height: 18px;
+      accent-color: #000;
+    }
+
+    .observacoes {
+      display: block;
+      margin-top: 16px;
+      font-size: 14px;
+    }
+
+    .observacoes textarea {
+      display: block;
+      width: 100%;
+      height: 100px;
+      margin-top: 8px;
+      padding: 9px;
+      resize: vertical;
+      border: 1px solid #777;
+      border-radius: 10px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    .botoes {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    button {
+      min-width: 125px;
+      padding: 9px 16px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    .btn-salvar {
+      background-color: #5799cd;
+    }
+
+    .btn-voltar {
+      background-color: #777;
+    }
+
+    .mensagem {
+      display: none;
+      margin-bottom: 14px;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .mensagem.sucesso {
+      display: block;
+      color: #155724;
+      background-color: #d4edda;
+    }
+
+    .mensagem.erro {
+      display: block;
+      color: #721c24;
+      background-color: #f8d7da;
+    }
+
+    footer {
+      padding: 10px;
+      background-color: #999;
+      color: white;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 550px) {
+      main {
+        width: 95%;
+        margin: 20px auto;
+      }
+
+      .campo {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .campo > label:first-child {
+        width: auto;
+      }
+
+      .botoes {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<main>
+
+  <h2>Gerenciador de Jogadores de Futebol</h2>
+
+  <section class="formulario">
+
+    <h3>Incluir novo jogador</h3>
+
+    <div id="mensagem" class="mensagem" role="alert"></div>
+
+    <form id="formCadastro">
+
+      <div class="campo">
+        <label for="nome">Nome</label>
+        <input
+          type="text"
+          id="nome"
+          name="nome"
+          minlength="2"
+          required
+        >
+      </div>
+
+      <div class="campo">
+        <label for="numeroCamisa">Número da camisa</label>
+        <input
+          type="number"
+          id="numeroCamisa"
+          name="numeroCamisa"
+          min="1"
+          max="99"
+          required
+        >
+      </div>
+
+      <div class="campo">
+        <label for="time">Time</label>
+        <input
+          type="text"
+          id="time"
+          name="time"
+          minlength="2"
+          required
+        >
+      </div>
+
+      <div class="campo">
+
+        <label>Lesionado</label>
+
+        <div class="opcoes-lesao">
+
+          <label for="naoLesionado">
+            <input
+              type="radio"
+              id="naoLesionado"
+              name="lesionado"
+              value="false"
+              required
+            >
+            Não
+          </label>
+
+          <label for="simLesionado">
+            <input
+              type="radio"
+              id="simLesionado"
+              name="lesionado"
+              value="true"
+            >
+            Sim
+          </label>
+
+        </div>
+      </div>
+
+      <label class="observacoes" for="observacoes">
+        Observações
+
+        <textarea
+          id="observacoes"
+          name="observacoes"
+          placeholder="Digite alguma observação, se necessário."
+        ></textarea>
+
+      </label>
+
+      <div class="botoes">
+
+        <button type="submit" class="btn-salvar" id="btnSalvar">
+          Salvar
+        </button>
+
+        <button
+          type="button"
+          class="btn-voltar"
+          onclick="window.location.href='index.html'"
+        >
+          Voltar
+        </button>
+
+      </div>
+
+    </form>
+  </section>
+
+</main>
+
+<footer>
+  Nome Aluno 1: Camila Santos de Barros /
+  Nome Aluno 2: Eryka Karolyna Marçal<br>
+  Turma: STADSCAS3NA / Ano: 2026
+</footer>
+
+<script>
+
+  const API = "/jogadores";
+
+  const formCadastro = document.getElementById("formCadastro");
+  const mensagem = document.getElementById("mensagem");
+  const btnSalvar = document.getElementById("btnSalvar");
+
+  // CADASTRAR JOGADOR
+
+  formCadastro.addEventListener("submit", async function(evento) {
+
+    evento.preventDefault();
+
+    const jogador = {
+
+      nome: document.getElementById("nome").value.trim(),
+
+      numeroCamisa: Number(
+        document.getElementById("numeroCamisa").value
+      ),
+
+      time: document.getElementById("time").value.trim(),
+
+      lesionado: document.querySelector(
+        'input[name="lesionado"]:checked'
+      ).value === "true",
+
+      observacoes: document.getElementById("observacoes").value.trim()
+
+    };
+
+    mensagem.textContent = "";
+    mensagem.className = "mensagem";
+
+    btnSalvar.disabled = true;
+    btnSalvar.textContent = "Salvando...";
+
+    try {
+
+      const resposta = await fetch(API, {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(jogador)
+
+      });
+
+      if (!resposta.ok) {
+
+        const erro = await resposta.text();
+
+        throw new Error(
+          erro || "Não foi possível cadastrar o jogador."
+        );
+      }
+
+      mensagem.textContent = "Jogador cadastrado com sucesso!";
+      mensagem.className = "mensagem sucesso";
+
+      formCadastro.reset();
+
+      setTimeout(function() {
+
+        window.location.href = "index.html";
+
+      }, 1500);
+
+    } catch (erro) {
+
+      mensagem.textContent = erro.message;
+      mensagem.className = "mensagem erro";
+
+    } finally {
+
+      btnSalvar.disabled = false;
+      btnSalvar.textContent = "Salvar";
+
+    }
+
+  });
+
+</script>
+
+</body>
+</html>
+
