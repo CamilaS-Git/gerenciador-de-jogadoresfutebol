@@ -26,5 +26,6 @@ public record JogadorRequest(
 	@NotNull(message = "Informe se o jogador está lesionado.")
 	Boolean lesionado,
 
+	@Size(max = 50, message = "As observações podem ter no máximo 50 caracteres.")
 	String observacoes)
 {}
