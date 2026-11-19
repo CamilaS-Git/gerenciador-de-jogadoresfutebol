@@ -51,11 +51,17 @@
       justify-content: space-between;
       align-items: center;
       gap: 10px;
+      min-width: 0;
     }
 
     .dados-jogador {
       line-height: 1.4;
       font-size: 14px;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: normal;
+      flex: 1;
+      min-width: 0;
     }
 
     .dados-jogador strong {
@@ -139,6 +145,33 @@
     .modal-conteudo h3 {
       font-size: 15px;
       margin: 0 0 12px;
+    }
+
+    .cabecalho-modal {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .cabecalho-modal h3 {
+      margin: 0;
+    }
+
+    .btn-fechar {
+      min-width: auto;
+      padding: 2px 7px;
+      background-color: transparent;
+      color: #555;
+      font-size: 23px;
+      line-height: 1;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-fechar:hover {
+      color: #c00000;
+      opacity: 1;
     }
 
     .campo {
@@ -291,9 +324,10 @@
 
 <footer>
   Nome Aluno 1: Camila Santos de Barros /
-  Nome Aluno 2: Eryka Karolyna Marçal<br>
+  Nome Aluno 2: Eryka Karolyna Marçal dos Santos<br>
   Turma: STADSCAS3NA / Ano: 2026<br>
-  Usou IA: Sim
+  Usou IA: Sim. FrontEnd: Para organização do script dentro dos arquivos html.
+  BackEnd: Para ajuda na montagem do service.
 </footer>
 
 <!-- MODAL DE ALTERAÇÃO -->
@@ -302,7 +336,16 @@
 
   <div class="modal-conteudo">
 
-    <h3 id="tituloAlteracao">Alterar jogador</h3>
+    <div class="cabecalho-modal">
+
+      <h3 id="tituloAlteracao">Alterar jogador</h3>
+
+      <button type="button" class="btn-fechar"
+              onclick="fecharModalAlteracao()">
+        &times;
+      </button>
+
+    </div>
 
     <div id="erroAlteracao" class="mensagem"></div>
 
@@ -389,6 +432,18 @@
 
   let jogadorSelecionado = null;
 
+  async function lerErro(resposta, padrao) {
+    try {
+      const corpo = await resposta.json();
+      if (corpo.erros && corpo.erros.length > 0) {
+        return corpo.erros.join(" | ");
+      }
+      return corpo.mensagem || padrao;
+    } catch {
+      return padrao;
+    }
+  }
+
   // LISTAR JOGADORES
 
   async function listarJogadores() {
@@ -436,6 +491,18 @@
         time.textContent = "Time: " + jogador.time;
 
         dados.append(nome, numero, time);
+
+  // APRESENTAR OBSERVAÇÕES, CASO EXISTAM
+
+        if (jogador.observacoes && jogador.observacoes.trim() !== "") {
+
+          const observacoes = document.createElement("strong");
+
+          observacoes.textContent = "Observações: " + jogador.observacoes;
+
+          dados.appendChild(observacoes);
+
+        }
 
         const acoes = document.createElement("div");
         acoes.className = "acoes";
@@ -547,10 +614,7 @@
       });
 
       if (!resposta.ok) {
-
-        const erro = await resposta.text();
-
-        throw new Error(erro || "Erro ao atualizar jogador.");
+        throw new Error(await lerErro(resposta, "Erro ao atualizar jogador."));
       }
 
       modalAlterar.style.display = "none";
@@ -566,6 +630,10 @@
   });
 
   // FECHAMENTO DO MODAL DE ALTERAÇÃO
+
+  function fecharModalAlteracao() {
+    modalAlterar.style.display = "none";
+  }
 
   modalAlterar.addEventListener("click", function(evento) {
     if (evento.target === modalAlterar) {
@@ -609,8 +677,7 @@
         );
 
         if (!resposta.ok) {
-          const erro = await resposta.text();
-          throw new Error(erro || "Erro ao excluir jogador.");
+          throw new Error(await lerErro(resposta, "Erro ao excluir jogador."));
         }
 
         modalExcluir.style.display = "none";

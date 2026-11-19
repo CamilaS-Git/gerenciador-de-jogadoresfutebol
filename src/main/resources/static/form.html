@@ -140,6 +140,12 @@
       background-color: #777;
     }
 
+    .aviso-obrigatorio {
+      margin: 15px 0 0;
+      font-size: 12px;
+      color: #555;
+    }
+
     .mensagem {
       display: none;
       margin-bottom: 14px;
@@ -208,7 +214,7 @@
     <form id="formCadastro">
 
       <div class="campo">
-        <label for="nome">Nome</label>
+        <label for="nome">Nome*</label>
         <input
           type="text"
           id="nome"
@@ -219,7 +225,7 @@
       </div>
 
       <div class="campo">
-        <label for="numeroCamisa">Número da camisa</label>
+        <label for="numeroCamisa">Número da camisa*</label>
         <input
           type="number"
           id="numeroCamisa"
@@ -231,7 +237,7 @@
       </div>
 
       <div class="campo">
-        <label for="time">Time</label>
+        <label for="time">Time*</label>
         <input
           type="text"
           id="time"
@@ -243,7 +249,7 @@
 
       <div class="campo">
 
-        <label>Lesionado</label>
+        <label>Lesionado*</label>
 
         <div class="opcoes-lesao">
 
@@ -277,6 +283,7 @@
         <textarea
           id="observacoes"
           name="observacoes"
+          maxlength="300"
           placeholder="Digite alguma observação, se necessário."
         ></textarea>
 
@@ -299,14 +306,19 @@
       </div>
 
     </form>
+    <p class="aviso-obrigatorio">
+      * Campos de preenchimento obrigatório.
+    </p>
   </section>
 
 </main>
 
 <footer>
   Nome Aluno 1: Camila Santos de Barros /
-  Nome Aluno 2: Eryka Karolyna Marçal<br>
-  Turma: STADSCAS3NA / Ano: 2026
+  Nome Aluno 2: Eryka Karolyna Marçal dos Santos<br>
+  Turma: STADSCAS3NA / Ano: 2026<br>
+  Usou IA: Sim. FrontEnd: Para organização do script dentro dos arquivos html.
+  BackEnd: Para ajuda na montagem do service.
 </footer>
 
 <script>
@@ -316,6 +328,18 @@
   const formCadastro = document.getElementById("formCadastro");
   const mensagem = document.getElementById("mensagem");
   const btnSalvar = document.getElementById("btnSalvar");
+
+  async function lerErro(resposta, padrao) {
+    try {
+      const corpo = await resposta.json();
+      if (corpo.erros && corpo.erros.length > 0) {
+        return corpo.erros.join(" | ");
+      }
+      return corpo.mensagem || padrao;
+    } catch {
+      return padrao;
+    }
+  }
 
   // CADASTRAR JOGADOR
 
@@ -362,12 +386,7 @@
       });
 
       if (!resposta.ok) {
-
-        const erro = await resposta.text();
-
-        throw new Error(
-          erro || "Não foi possível cadastrar o jogador."
-        );
+        throw new Error(await lerErro(resposta, "Não foi possível cadastrar o jogador."));
       }
 
       mensagem.textContent = "Jogador cadastrado com sucesso!";
