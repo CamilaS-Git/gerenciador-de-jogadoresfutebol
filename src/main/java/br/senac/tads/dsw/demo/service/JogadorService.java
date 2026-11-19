@@ -72,7 +72,6 @@ public class JogadorService {
 		return JogadorResponse.de(salvo);
 	}
 
-	// Atualização de jogador
 	@Transactional
 	public JogadorResponse atualizarJogador(Long id, JogadorRequest request) {
 		JogadorEntity entity = buscarJogador(id);
