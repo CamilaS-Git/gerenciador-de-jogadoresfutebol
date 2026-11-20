@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -73,7 +72,6 @@ public class JogadorService {
 		return JogadorResponse.de(salvo);
 	}
 
-	// Atualização de jogador
 	@Transactional
 	public JogadorResponse atualizarJogador(Long id, JogadorRequest request) {
 		JogadorEntity entity = buscarJogador(id);
