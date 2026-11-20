@@ -1,10 +1,801 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciador de Jogadores</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      border-top: 12px solid #ff9900;
+      border-bottom: 6px solid #000080;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      margin: 30px auto;
+      flex: 1;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 22px;
+      font-weight: normal;
+      margin: 0 0 10px;
+    }
+
+    .lista-jogadores {
+      border: 1px solid #777;
+      background-color: #f4f4f4;
+      padding: 15px;
+      min-height: 300px;
+    }
+
+    .jogador {
+      border: 1px solid #71869b;
+      background-color: white;
+      padding: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .dados-jogador {
+      line-height: 1.4;
+      font-size: 14px;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: normal;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .dados-jogador strong {
+      display: block;
+    }
+
+    .lesionado {
+      display: inline-block;
+      background-color: #ed792b;
+      color: white;
+      font-size: 11px;
+      padding: 3px 10px;
+      margin-left: 10px;
+    }
+
+    .acoes {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 90px;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      font-size: 14px;
+      padding: 7px 12px;
+    }
+
+    .btn-alterar {
+      background-color: #5799cd;
+    }
+
+    .btn-excluir {
+      background-color: #c00000;
+    }
+
+    .btn-incluir {
+      display: block;
+      margin: 12px auto;
+      background-color: #5799cd;
+      padding: 9px 20px;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    footer {
+      background-color: #999999;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* MODAIS */
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.45);
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+      z-index: 10;
+    }
+
+    .modal-conteudo {
+      background-color: white;
+      border: 1px solid #71869b;
+      padding: 15px;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .modal-conteudo h3 {
+      font-size: 15px;
+      margin: 0 0 12px;
+    }
+
+    .cabecalho-modal {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .cabecalho-modal h3 {
+      margin: 0;
+    }
+
+    .btn-fechar {
+      min-width: auto;
+      padding: 2px 7px;
+      background-color: transparent;
+      color: #555;
+      font-size: 23px;
+      line-height: 1;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-fechar:hover {
+      color: #c00000;
+      opacity: 1;
+    }
+
+    .campo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .campo label {
+      width: 125px;
+      font-size: 13px;
+    }
+
+    .campo input[type="text"],
+    .campo input[type="number"] {
+      flex: 1;
+      min-width: 0;
+      padding: 7px;
+      border: 1px solid #777;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .campo-radio {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .observacoes {
+      display: block;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+
+    .observacoes textarea {
+      display: block;
+      width: 100%;
+      height: 85px;
+      margin-top: 8px;
+      padding: 8px;
+      resize: vertical;
+      border: 1px solid #777;
+      border-radius: 10px;
+      font-family: Arial, sans-serif;
+    }
+
+    .btn-salvar {
+      display: block;
+      margin: 12px auto 0;
+      width: 125px;
+      padding: 9px;
+      background-color: #5799cd;
+    }
+
+    .aviso-obrigatorio {
+      margin: 15px 0 0;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .modal-exclusao {
+      max-width: 300px;
+      text-align: center;
+    }
+
+    .botoes-confirmacao {
+      display: flex;
+      justify-content: space-evenly;
+      margin-top: 20px;
+    }
+
+    .btn-sim {
+      background-color: #5799cd;
+      min-width: 85px;
+    }
+
+    .btn-nao {
+      background-color: #c00000;
+      min-width: 85px;
+    }
+
+    .mensagem {
+      display: none;
+      padding: 10px;
+      margin-bottom: 12px;
+      text-align: center;
+      font-size: 13px;
+      border-radius: 5px;
+    }
+
+    .mensagem.sucesso {
+      display: block;
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .mensagem.erro {
+      display: block;
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .vazio {
+      text-align: center;
+      padding: 30px;
+      color: #666;
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        width: 95%;
+        margin: 20px auto;
+      }
+
+      .jogador {
+        align-items: flex-start;
+      }
+
+      .campo {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .campo label {
+        width: auto;
+      }
+
+      .campo input[type="text"],
+      .campo input[type="number"] {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<main class="container">
+
+  <h2>Gerenciador de Jogadores de Futebol</h2>
+
+  <div id="mensagem" class="mensagem"></div>
+
+  <section class="lista-jogadores" id="listaJogadores">
+    <p class="vazio">Carregando jogadores...</p>
+  </section>
+
+  <button type="button" class="btn-incluir" onclick="window.location.href='form.html'">
+    Incluir novo jogador
+  </button>
+
+</main>
+
+<footer>
+  Nome Aluno 1: Camila Santos de Barros /
+  Nome Aluno 2: Eryka Karolyna Marçal dos Santos<br>
+  Turma: STADSCAS3NA / Ano: 2026<br>
+  Usou IA: Sim. FrontEnd: Para organização do script dentro dos arquivos html.
+  BackEnd: Para ajuda na montagem do service.
+</footer>
+
+<!-- MODAL DE ALTERAÇÃO -->
+
+<div class="modal" id="modalAlterar">
+
+  <div class="modal-conteudo">
+
+    <div class="cabecalho-modal">
+
+      <h3 id="tituloAlteracao">Alterar jogador</h3>
+
+      <button type="button" class="btn-fechar"
+              onclick="fecharModalAlteracao()">
+        &times;
+      </button>
+
+    </div>
+
+    <div id="erroAlteracao" class="mensagem"></div>
+
+    <form id="formAlterar">
+
+      <div class="campo">
+        <label for="nome">Nome*</label>
+        <input type="text" id="nome" minlength="2" required>
+      </div>
+
+      <div class="campo">
+        <label for="numeroCamisa">Número da camisa*</label>
+        <input type="number" id="numeroCamisa"
+               min="1" max="99" required>
+      </div>
+
+      <div class="campo">
+        <label for="time">Time*</label>
+        <input type="text" id="time" minlength="2" required>
+      </div>
+
+      <div class="campo">
+        <label>Lesionado*</label>
+
+        <div class="campo-radio">
+          <input type="radio" name="lesionado"
+                 id="naoLesionado" value="false" required>
+          <label for="naoLesionado">Não</label>
+
+          <input type="radio" name="lesionado"
+                 id="simLesionado" value="true">
+          <label for="simLesionado">Sim</label>
+        </div>
+      </div>
+
+      <label class="observacoes" for="observacoes">
+        Observações
+        <textarea id="observacoes"></textarea>
+      </label>
+
+      <button type="submit" class="btn-salvar">
+        Salvar
+      </button>
+
+    </form>
+    <p class="aviso-obrigatorio">
+      * Campos de preenchimento obrigatório.
+    </p>
+  </div>
+</div>
+
+<!-- MODAL DE EXCLUSÃO -->
+
+<div class="modal" id="modalExcluir">
+
+  <div class="modal-conteudo modal-exclusao">
+
+    <p id="textoExclusao">
+      Deseja excluir o jogador?
+    </p>
+
+    <div id="erroExclusao" class="mensagem"></div>
+
+    <div class="botoes-confirmacao">
+
+      <button type="button" class="btn-sim" id="confirmarExclusao">
+        SIM
+      </button>
+
+      <button type="button" class="btn-nao" id="cancelarExclusao">
+        NÃO
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<script>
+
+  const API = "/jogadores";
+
+  const listaJogadores = document.getElementById("listaJogadores");
+  const modalAlterar = document.getElementById("modalAlterar");
+  const modalExcluir = document.getElementById("modalExcluir");
+
+  const formAlterar = document.getElementById("formAlterar");
+
+  let jogadorSelecionado = null;
+
+  // LISTAR JOGADORES
+
+  async function listarJogadores() {
+
+    try {
+
+      const resposta = await fetch(API);
+
+      if (!resposta.ok) {
+        throw new Error("Não foi possível carregar os jogadores.");
+      }
+
+      const jogadores = await resposta.json();
+
+      listaJogadores.innerHTML = "";
+
+      if (jogadores.length === 0) {
+        listaJogadores.innerHTML =
+          '<p class="vazio">Nenhum jogador cadastrado.</p>';
+        return;
+      }
+
+      jogadores.forEach(jogador => {
+
+        const card = document.createElement("div");
+        card.className = "jogador";
+
+        const dados = document.createElement("div");
+        dados.className = "dados-jogador";
+
+        const nome = document.createElement("strong");
+        nome.textContent = jogador.nome;
+
+        if (jogador.lesionado) {
+          const etiqueta = document.createElement("span");
+          etiqueta.className = "lesionado";
+          etiqueta.textContent = "LESIONADO";
+          nome.appendChild(etiqueta);
+        }
+
+        const numero = document.createElement("strong");
+        numero.textContent = "Número da camisa: " + jogador.numeroCamisa;
+
+        const time = document.createElement("strong");
+        time.textContent = "Time: " + jogador.time;
+
+        dados.append(nome, numero, time);
+
+  // APRESENTAR OBSERVAÇÕES, CASO EXISTAM
+
+        if (jogador.observacoes && jogador.observacoes.trim() !== "") {
+
+          const observacoes = document.createElement("strong");
+
+          observacoes.textContent = "Observações: " + jogador.observacoes;
+
+          dados.appendChild(observacoes);
+
+        }
+
+        const acoes = document.createElement("div");
+        acoes.className = "acoes";
+
+        const alterar = document.createElement("button");
+        alterar.className = "btn-alterar";
+        alterar.textContent = "Alterar";
+        alterar.addEventListener("click", () => abrirAlteracao(jogador.id));
+
+        const excluir = document.createElement("button");
+        excluir.className = "btn-excluir";
+        excluir.textContent = "Excluir";
+        excluir.addEventListener("click", () => abrirExclusao(jogador.id));
+
+        acoes.append(alterar, excluir);
+
+        card.append(dados, acoes);
+
+        listaJogadores.appendChild(card);
+
+      });
+
+    } catch (erro) {
+
+      listaJogadores.innerHTML =
+        '<p class="vazio">Erro ao carregar os jogadores.</p>';
+
+      mostrarMensagem(erro.message, "erro");
+    }
+  }
+
+  // ABRIR MODAL DE ALTERAÇÃO
+
+  async function abrirAlteracao(id) {
+
+    try {
+
+      const resposta = await fetch(`${API}/${id}`);
+
+      if (!resposta.ok) {
+        throw new Error("Não foi possível encontrar o jogador.");
+      }
+
+      const jogador = await resposta.json();
+
+      jogadorSelecionado = jogador.id;
+
+      document.getElementById("tituloAlteracao").textContent =
+        `Alterar jogador - ID ${jogador.id}`;
+
+      document.getElementById("nome").value = jogador.nome;
+      document.getElementById("numeroCamisa").value = jogador.numeroCamisa;
+      document.getElementById("time").value = jogador.time;
+      document.getElementById("observacoes").value =
+        jogador.observacoes || "";
+
+      document.getElementById("simLesionado").checked =
+        jogador.lesionado === true;
+
+      document.getElementById("naoLesionado").checked =
+        jogador.lesionado === false;
+
+      limparErro("erroAlteracao");
+
+      modalAlterar.style.display = "flex";
+
+    } catch (erro) {
+
+      mostrarMensagem(erro.message, "erro");
+    }
+
+    validarMinimoDoisCaracteres(
+      campoNome,
+      "O nome deve ter no mínimo 2 caracteres que não sejam espaços em branco."
+    );
+
+    validarMinimoDoisCaracteres(
+      campoTime,
+      "O time deve ter no mínimo 2 caracteres que não sejam espaços em branco."
+    );
+  }
+
+  // SALVAR ALTERAÇÃO
+
+  function validarMinimoDoisCaracteres(campo, mensagemErro) {
+
+    const quantidade = campo.value.replace(/\s/g, "").length;
+
+    if (campo.value.length > 0 && quantidade < 2) {
+      campo.setCustomValidity(mensagemErro);
+    } else {
+      campo.setCustomValidity("");
+    }
+
+  }
+
+  const campoNome = document.getElementById("nome");
+  const campoTime = document.getElementById("time");
+
+  campoNome.addEventListener("input", function() {
+    validarMinimoDoisCaracteres(
+      campoNome,
+      "O nome deve ter no mínimo 2 caracteres que não sejam espaços em branco."
+    );
+  });
+
+  campoTime.addEventListener("input", function() {
+    validarMinimoDoisCaracteres(
+      campoTime,
+      "O time deve ter no mínimo 2 caracteres que não sejam espaços em branco."
+    );
+  });
+
+  formAlterar.addEventListener("submit", async function(evento) {
+
+    evento.preventDefault();
+
+    const jogador = {
+
+      nome: document.getElementById("nome").value.trim(),
+
+      numeroCamisa: Number(
+        document.getElementById("numeroCamisa").value
+      ),
+
+      time: document.getElementById("time").value.trim(),
+
+      lesionado: document.querySelector(
+        'input[name="lesionado"]:checked'
+      )?.value === "true",
+
+      observacoes: document.getElementById("observacoes").value.trim()
+
+    };
+
+    try {
+
+      const resposta = await fetch(`${API}/${jogadorSelecionado}`, {
+
+        method: "PUT",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(jogador)
+
+      });
+
+      if (!resposta.ok) {
+        throw new Error(await lerErro(resposta, "Erro ao atualizar jogador."));
+      }
+
+      modalAlterar.style.display = "none";
+
+      await listarJogadores();
+
+      mostrarMensagem("Jogador alterado com sucesso!", "sucesso");
+
+    } catch (erro) {
+
+      mostrarErro("erroAlteracao", erro.message);
+    }
+  });
+
+  async function lerErro(resposta, padrao) {
+    try {
+      const corpo = await resposta.json();
+      if (corpo.erros && corpo.erros.length > 0) {
+        return corpo.erros.join(" | ");
+      }
+      return corpo.mensagem || padrao;
+    } catch {
+      return padrao;
+    }
+  }
+
+  // FECHAMENTO DO MODAL DE ALTERAÇÃO
+
+  function fecharModalAlteracao() {
+    modalAlterar.style.display = "none";
+  }
+
+  modalAlterar.addEventListener("click", function(evento) {
+    if (evento.target === modalAlterar) {
+      modalAlterar.style.display = "none";
+    }
+  });
+
+  document.addEventListener("keydown", function(evento) {
+    if (evento.key === "Escape") {
+      modalAlterar.style.display = "none";
+      modalExcluir.style.display = "none";
+    }
+  });
+
+  // ABRIR MODAL DE EXCLUSÃO
+
+  function abrirExclusao(id) {
+
+    jogadorSelecionado = id;
+
+    document.getElementById("textoExclusao").textContent =
+      `Deseja excluir o jogador ID ${id}?`;
+
+    limparErro("erroExclusao");
+
+    modalExcluir.style.display = "flex";
+  }
+
+  // CONFIRMAR EXCLUSÃO
+
+  document.getElementById("confirmarExclusao")
+    .addEventListener("click", async function() {
+
+      try {
+
+        const resposta = await fetch(
+          `${API}/${jogadorSelecionado}`,
+          {
+            method: "DELETE"
+          }
+        );
+
+        if (!resposta.ok) {
+          throw new Error(await lerErro(resposta, "Erro ao excluir jogador."));
+        }
+
+        modalExcluir.style.display = "none";
+
+        await listarJogadores();
+
+        mostrarMensagem("Jogador excluído com sucesso!", "sucesso");
+
+        jogadorSelecionado = null;
+
+      } catch (erro) {
+
+        mostrarErro("erroExclusao", erro.message);
+      }
+    });
+
+  // CANCELAR EXCLUSÃO
+
+  document.getElementById("cancelarExclusao")
+    .addEventListener("click", function() {
+
+      modalExcluir.style.display = "none";
+      jogadorSelecionado = null;
+
+    });
+
+  // MENSAGENS
+
+  function mostrarMensagem(texto, tipo) {
+
+    const mensagem = document.getElementById("mensagem");
+
+    mensagem.textContent = texto;
+    mensagem.className = "mensagem " + tipo;
+
+    setTimeout(() => {
+      mensagem.className = "mensagem";
+      mensagem.textContent = "";
+    }, 4000);
+  }
+
+  function mostrarErro(id, texto) {
+
+    const elemento = document.getElementById(id);
+
+    elemento.textContent = texto;
+    elemento.className = "mensagem erro";
+  }
+
+  function limparErro(id) {
+
+    const elemento = document.getElementById(id);
+
+    elemento.textContent = "";
+    elemento.className = "mensagem";
+  }
+
+  // CARREGAR LISTAGEM AO ABRIR A PÁGINA
+
+  listarJogadores();
+
+</script>
+
+</body>
+</html>
+
 <!-- hash-identificacao: 951b0082162937d241e0fe49fdd47ce1c6e2be46e7105d2d2540999ab0c7284f -->
 <!--
   Arquivo gerado automaticamente pelo TADS Spring Initializr customizado (versão didática).
   ATENÇÃO: Este arquivo NÃO é gerado pelo Spring Initializr oficial.
--->
-<!DOCTYPE html>
-<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,3 +849,4 @@
   </footer>
 </body>
 </html>
+-->

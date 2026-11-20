@@ -283,6 +283,8 @@
         <textarea
           id="observacoes"
           name="observacoes"
+          maxlength="100"
+          placeholder="Digite alguma observação, se necessário. Máximo 100 caracteres."
         ></textarea>
 
       </label>
@@ -326,6 +328,37 @@
   const formCadastro = document.getElementById("formCadastro");
   const mensagem = document.getElementById("mensagem");
   const btnSalvar = document.getElementById("btnSalvar");
+
+  // VALIDAÇÕES
+
+  function validarMinimoDoisCaracteres(campo, mensagemErro) {
+
+    const quantidade = campo.value.replace(/\s/g, "").length;
+
+    if (campo.value.length > 0 && quantidade < 2) {
+      campo.setCustomValidity(mensagemErro);
+    } else {
+      campo.setCustomValidity("");
+    }
+
+  }
+
+  const campoNome = document.getElementById("nome");
+  const campoTime = document.getElementById("time");
+
+  campoNome.addEventListener("input", function() {
+    validarMinimoDoisCaracteres(
+      campoNome,
+      "O nome deve ter no mínimo 2 caracteres que não sejam espaços em branco."
+    );
+  });
+
+  campoTime.addEventListener("input", function() {
+    validarMinimoDoisCaracteres(
+      campoTime,
+      "O time deve ter no mínimo 2 caracteres que não sejam espaços em branco."
+    );
+  });
 
   async function lerErro(resposta, padrao) {
     try {
