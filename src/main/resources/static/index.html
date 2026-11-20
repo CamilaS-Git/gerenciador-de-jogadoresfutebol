@@ -229,6 +229,12 @@
       background-color: #5799cd;
     }
 
+    .aviso-obrigatorio {
+      margin: 15px 0 0;
+      font-size: 12px;
+      color: #555;
+    }
+
     .modal-exclusao {
       max-width: 300px;
       text-align: center;
@@ -352,23 +358,23 @@
     <form id="formAlterar">
 
       <div class="campo">
-        <label for="nome">Nome</label>
-        <input type="text" id="nome" required>
+        <label for="nome">Nome*</label>
+        <input type="text" id="nome" minlength="2" required>
       </div>
 
       <div class="campo">
-        <label for="numeroCamisa">Número da camisa</label>
+        <label for="numeroCamisa">Número da camisa*</label>
         <input type="number" id="numeroCamisa"
                min="1" max="99" required>
       </div>
 
       <div class="campo">
-        <label for="time">Time</label>
-        <input type="text" id="time" required>
+        <label for="time">Time*</label>
+        <input type="text" id="time" minlength="2" required>
       </div>
 
       <div class="campo">
-        <label>Lesionado</label>
+        <label>Lesionado*</label>
 
         <div class="campo-radio">
           <input type="radio" name="lesionado"
@@ -391,6 +397,9 @@
       </button>
 
     </form>
+    <p class="aviso-obrigatorio">
+      * Campos de preenchimento obrigatório.
+    </p>
   </div>
 </div>
 
@@ -431,18 +440,6 @@
   const formAlterar = document.getElementById("formAlterar");
 
   let jogadorSelecionado = null;
-
-  async function lerErro(resposta, padrao) {
-    try {
-      const corpo = await resposta.json();
-      if (corpo.erros && corpo.erros.length > 0) {
-        return corpo.erros.join(" | ");
-      }
-      return corpo.mensagem || padrao;
-    } catch {
-      return padrao;
-    }
-  }
 
   // LISTAR JOGADORES
 
@@ -573,9 +570,48 @@
 
       mostrarMensagem(erro.message, "erro");
     }
+
+    validarMinimoDoisCaracteres(
+      campoNome,
+      "O nome deve ter no mínimo 2 caracteres que não sejam espaços em branco."
+    );
+
+    validarMinimoDoisCaracteres(
+      campoTime,
+      "O time deve ter no mínimo 2 caracteres que não sejam espaços em branco."
+    );
   }
 
   // SALVAR ALTERAÇÃO
+
+  function validarMinimoDoisCaracteres(campo, mensagemErro) {
+
+    const quantidade = campo.value.replace(/\s/g, "").length;
+
+    if (campo.value.length > 0 && quantidade < 2) {
+      campo.setCustomValidity(mensagemErro);
+    } else {
+      campo.setCustomValidity("");
+    }
+
+  }
+
+  const campoNome = document.getElementById("nome");
+  const campoTime = document.getElementById("time");
+
+  campoNome.addEventListener("input", function() {
+    validarMinimoDoisCaracteres(
+      campoNome,
+      "O nome deve ter no mínimo 2 caracteres que não sejam espaços em branco."
+    );
+  });
+
+  campoTime.addEventListener("input", function() {
+    validarMinimoDoisCaracteres(
+      campoTime,
+      "O time deve ter no mínimo 2 caracteres que não sejam espaços em branco."
+    );
+  });
 
   formAlterar.addEventListener("submit", async function(evento) {
 
@@ -628,6 +664,18 @@
       mostrarErro("erroAlteracao", erro.message);
     }
   });
+
+  async function lerErro(resposta, padrao) {
+    try {
+      const corpo = await resposta.json();
+      if (corpo.erros && corpo.erros.length > 0) {
+        return corpo.erros.join(" | ");
+      }
+      return corpo.mensagem || padrao;
+    } catch {
+      return padrao;
+    }
+  }
 
   // FECHAMENTO DO MODAL DE ALTERAÇÃO
 
